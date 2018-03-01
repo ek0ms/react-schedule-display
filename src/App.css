@@ -1,0 +1,66 @@
+.yAxis {
+  height: 720px;
+  width: 100px;
+  position: relative;
+  border-right: 1px solid rgb(215, 215, 215);
+  padding-right: 10px;
+}
+
+.eventList {
+  height: 720px;
+  width: 620px;
+  position: relative;
+  background-color: rgb(236, 236, 236);
+  padding: 0 10px;
+}
+
+.dayView {
+  max-height: 800px;
+  background-color: rgb(255, 255, 255);
+  width: 800px;
+  margin: 40px auto;
+  display: flex;
+}
+
+h4 {
+  margin: 0;
+}
+
+p {
+  font-size: 10px;
+  margin: 0;
+  margin-left: 2px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.time-text {
+  height: 30px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  transform: translateY(-50%);
+}
+
+.grey-text {
+  margin-left: 5px;
+  color: rgb(169, 169, 169);
+  font-size: 0.75em;
+}
+
+.bold-text {
+  color: rgb(103, 103, 103);
+  font-weight: bold;
+}
+
+.am-pm {
+  transform: translateY(10%);
+}
+
+.event {
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+}

@@ -1,17 +1,28 @@
 import React, { Component } from "react";
 import "./App.css";
+import EventList from "./EventList";
+import YAxis from "./YAxis";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      events: {
+        event1: { start: 60, end: 120 },
+        event2: { start: 100, end: 240 },
+        event3: { start: 700, end: 720 }
+      }
+    };
+  }
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div>
+        <h1>Schedule</h1>
+        <div className="dayView">
+          <YAxis />
+          <EventList events={this.state.events} />
+        </div>
       </div>
     );
   }
