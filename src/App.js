@@ -8,44 +8,25 @@ class App extends Component {
     super(props);
 
     this.state = {
-      events: [
-        { key: "event1", start: 60, end: 120 },
-        { key: "event2", start: 100, end: 240 },
-        { key: "event3", start: 700, end: 720 }
-      ],
-      eventer: {
-        event1: {
-          start: 60,
-          end: 120
-        },
-        event2: {
-          start: 100,
-          end: 240
-        },
-        event3: {
-          start: 700,
-          end: 720
-        },
-        event4: {
-          start: 80,
-          end: 240
-        },
-        event5: {
-          start: 200,
-          end: 240
-        }
+      events: {
+        event1: { start: 60, end: 120 }, // an event from 10am to 11am
+        event2: { start: 100, end: 240 }, // an event from 10:40am to 1pm
+        event3: { start: 700, end: 720 }, // an event from 8:40pm to 9pm
+        "-K2rlJ-nkJBtkLHL0QmO": { end: 150, start: 30 },
+        "-K2rlKbFfXz3OEoxRBJU": { end: 650, start: 540 },
+        "-K2rlLd-VjcZ_rtBlVuM": { end: 620, start: 560 },
+        "-K2rlMb_GD98QiMk8zGF": { end: 700, start: 630 }
       }
     };
   }
 
   render() {
-    layOutDay(this.state.eventer);
     return (
       <div>
         <h1>Schedule</h1>
         <div className="dayView">
           <YAxis />
-          <EventList events={this.state.events} />
+          <EventList events={layOutDay(this.state.events)} />
         </div>
       </div>
     );
@@ -56,15 +37,11 @@ export default App;
 
 function layOutDay(data) {
   // A sorted array of the event data
-  let eventEntriesArray = sortArrayByStartThenEnd(Object.entries(data));
+  const eventEntriesArray = sortArrayByStartThenEnd(Object.entries(data));
+  const blockWidth = 620;
 
-  const blockWidth = 600;
-
-  // Helper function to determine if two events that collide
-  const collidesWith = (event1, event2) =>
-    event1.end > event2.start && event1.start < event2.end;
-
-  console.log(eventPlacer(eventEntriesArray));
+  const eventedColumns = eventPlacer(eventEntriesArray);
+  return eventRestructurer(eventedColumns, blockWidth);
 
   // Function to place events; input is a sorted array of the events
   // Output is a multidemensional array where the elements are vertical groups(arrays) of the events
@@ -80,7 +57,13 @@ function layOutDay(data) {
         columns.push([currentEvent]);
       } else {
         // Iterate through the returning array of groups
-        columns.forEach((group, columnsIndex) => {
+        for (
+          let columnsIndex = 0;
+          columnsIndex < columns.length;
+          columnsIndex++
+        ) {
+          const group = columns[columnsIndex];
+
           for (let groupIndex = 0; groupIndex < group.length; groupIndex++) {
             // Iterate through the events that are in the group
             const iteratingEventValues = group[groupIndex][1];
@@ -99,112 +82,75 @@ function layOutDay(data) {
             } else if (
               collidesWith(iteratingEventValues, currentEventValues) ===
                 false &&
+              groupIndex === group.length - 1 &&
               placed === false
             ) {
               // If the event does not collide && it has not been placed yet,
               // it will be placed in its current group
+              // Break out of group loop when placed
               group.push(currentEvent);
               placed = true;
               break;
             }
           }
-        });
+          // Break out of column loop if event has been placed
+          if (placed) {
+            break;
+          }
+        }
       }
     });
     return columns;
   }
-  // } else if (
-  //   lastEventEndTime !== null &&
-  //   currentEvent.start >= lastEventEndTime
-  // ) {
-  //   columns.push(array[index]);
-  //   lastEventEndTime == null;
-  // }
-  // else {
-  //   columns.push.concat(array[index])
-  // }
 
-  // Assigns lastEventEndTime to be the time of the latest(time-wise) event
-  // lastEvent = event[index];
-  // if (lastEventEndTime === null || currentEvent.end > lastEventEndTime) {
-  //   lastEventEndTime = currentEvent.end;
-  // }
+  // Iterate through the array of columns and reconstruct the objects, add properties,
+  // and return them in an array
+  function eventRestructurer(columns, blockWidth) {
+    const resultArray = [];
+    const numberOfColumns = columns.length;
+    columns.forEach((group, columnsIndex) => {
+      group.forEach(event => {
+        const factor = leftWidthFactor(event, columnsIndex, columns);
+        resultArray.push({
+          id: `${event[0]}`,
+          start: event[1].start,
+          end: event[1].end,
+          top: `${event[1].start}px`,
+          left: `${columnsIndex / numberOfColumns * 100 * factor}%`,
+          width: blockWidth / numberOfColumns * factor
+        });
+      });
+    });
+    return resultArray;
+  }
 
-  // restructuredEvents.forEach(currentEvent => {
-  //   // Check to see if the current event start time overlaps with last event end time
-  //   if (lastEventEndTime !== null && currentEvent.start >= lastEventEndTime) {
-  //     // If there is no overlap, the event stays in the same column
-  //     packEvents(columns, blockWidth);
-  //     columns = [];
-  //     lastEventEndTime = null;
-  //   }
-  //
-  //   let placed = false;
-  //   for (let i = 0; i < columns.length; i++) {
-  //     const currentColumn = columns[i];
-  //     if (
-  //       !collidesWith(currentColumn[currentColumn.length - 1], currentEvent)
-  //     ) {
-  //       // If last event in the column does not collide with the current event,
-  //       // place it in the same column
-  //       currentColumn.push(currentEvent);
-  //       placed = true;
-  //       break;
-  //     }
-  //   }
-  //
-  //   // If it was not possible to place the currentEvent in the currentColumn
-  //   // because of overlap, push the event into a new column
-  //   if (!placed) {
-  //     columns.push([currentEvent]);
-  //   }
-  //
-  //   // Assigns lastEventEndTime to be the time of the latest(time-wise) event
-  //   if (lastEventEndTime === null || currentEvent.end > lastEventEndTime) {
-  //     lastEventEndTime = currentEvent.end;
-  //   }
-  //
-  //   if (columns.length > 0) {
-  //     packEvents(columns, blockWidth);
-  //   }
-  // });
+  // Helper function to provide a factor to calculate left and width properties
+  function leftWidthFactor(event, columnsIndex, columns) {
+    const eventValues = event[1];
+    let factor = columns.length - columnsIndex;
 
-  // Function to determine left and width of events
-  // const packEvents = (columns, blockWidth) => {
-  //   let array = [];
-  //   const numberOfColumns = columns.length;
-  //   for (let columnsIndex = 0; columnsIndex < numberOfColumns; columnsIndex++) {
-  //     const currentColumn = columns[columnsIndex];
-  //     for (
-  //       let currentColumnIndex = 0;
-  //       currentColumnIndex < currentColumn.length;
-  //       currentColumnIndex++
-  //     ) {
-  //       const event = currentColumn[currentColumnIndex];
-  //       array.push(
-  //         Object.assign(event, {
-  //           left: `${columnsIndex / numberOfColumns * 100}%`,
-  //           width: blockWidth / numberOfColumns - 1
-  //         })
-  //       );
-  //       // let colSpan = expandEvent(event, i, columns);
-  //     }
-  //   }
-  //   console.log(array);
-  // };
-
-  // Iterate over JSON input and output an array of newly mapped event objects
-  // let restructuredEvents = Object.entries(events).map(eventInfo => {
-  //   const [id, { start, end }] = eventInfo;
-  //   return {
-  //     id,
-  //     start,
-  //     end,
-  //     left: ``,
-  //     top: `${start}px`,
-  //     width: ``
-  //   };
-  // });
+    for (let i = columnsIndex + 1; i < columns.length; i++) {
+      // Iterate starting with the column after the current one
+      const nextColumn = columns[i];
+      for (let j = 0; j < nextColumn.length; j++) {
+        // Iterate through the events on that are in the goup
+        const nextEventValues = nextColumn[j][1];
+        if (collidesWith(eventValues, nextEventValues)) {
+          // If the event collides with the event it is checking, decrease the
+          // factor && break out of the loop
+          factor--;
+          break;
+        }
+      }
+    }
+    if (factor === 1) {
+      // If the factor is 1, the number of colliding events in the horzizontal
+      // row is equal to the number of columns
+      return factor;
+    } else {
+      return columns.length / factor;
+    }
+  }
 
   // Helper fucntion to sort events by starting time, then by ending time
   function sortArrayByStartThenEnd(array) {
@@ -215,5 +161,10 @@ function layOutDay(data) {
       if (event1.end > event2.end) return 1;
       return 0;
     });
+  }
+
+  // Helper function to determine if two events collide
+  function collidesWith(event1, event2) {
+    return event1.end >= event2.start && event1.start <= event2.end;
   }
 }

@@ -14,8 +14,11 @@
   padding: 0 10px;
 }
 
+.paddingWrapper {
+  position: relative;
+}
+
 .dayView {
-  max-height: 800px;
   background-color: rgb(255, 255, 255);
   width: 800px;
   margin: 40px auto;
@@ -24,12 +27,15 @@
 
 h4 {
   margin: 0;
+  padding: 8px 0 0 8px;
+  font-size: 12px;
+  color: rgb(66, 99, 159);
 }
 
 p {
   font-size: 10px;
   margin: 0;
-  margin-left: 2px;
+  padding-left: 8px;
 }
 
 h1 {
@@ -63,4 +69,8 @@ h1 {
 .event {
   background-color: rgb(255, 255, 255);
   position: absolute;
+  border: 1px solid rgb(208, 208, 208);
+  border-left: 4px solid rgb(66, 99, 158);
+  box-sizing: border-box;
+  overflow: hidden;
 }
