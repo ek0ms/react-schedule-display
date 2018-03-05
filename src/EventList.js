@@ -1,5 +1,3 @@
-/* eslint react/prop-types: 0 */
-
 import React, { Component } from "react";
 import Event from "./Event";
 
