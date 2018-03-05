@@ -14,8 +14,21 @@ This challenge was completed in ReactJS. The majority of the functionality resid
 
 **YAxis.js:** Provides structure for the time slots on the left of the calendar
 
-## Usage
+## Install
+Move to root project folder and with npm:
 
+```
+npm install
+```
+
+## Usage
+**To run:** Move to root folder and with npm:
+
+```
+npm start
+```
+
+## Details
 **In App.js**:
 
 1.  Data is fetched in ComponentDidMount() and the state is updated
