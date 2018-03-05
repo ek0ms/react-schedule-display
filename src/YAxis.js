@@ -2,7 +2,7 @@
 import React from "react";
 
 const YAxis = () => (
-  <div className="yAxis">
+  <div className="y-axis">
     <div className="time-text">
       <span className="bold-text">9:00</span>
       <span className="grey-text am-pm">AM</span>

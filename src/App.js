@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
+
 import "./App.css";
 import EventList from "./EventList";
 import YAxis from "./YAxis";
@@ -8,53 +10,28 @@ class App extends Component {
     super(props);
 
     this.state = {
-      events: {
-        NineTo920: { start: 0, end: 20 }, // an event from 10:40am to 1pm
-        NineTo950: { start: 0, end: 50 }, // an event from 10:40am to 1pm
-        NineTo1130: { start: 0, end: 150 },
-        Nine30To1130: { start: 30, end: 150 },
-        TenTo11: { start: 60, end: 120 }, // an event from 10am to 11am
-        event2: { start: 100, end: 240 }, // an event from 10:40am to 1pm
-        event56: { start: 140, end: 180 },
-        event256: { start: 140, end: 180 },
-        event4: { start: 100, end: 240 }, // an event from 10:40am to 1pm
-        sssss: { end: 360, start: 300 },
-        event6: { start: 700, end: 720 }, // an event from 8:40pm to 9pm
-        event67: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
-        event62: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
-        event63: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
-        event64: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
-        event65: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
-        "-K2rlKbFfXz3OEoxRBJU": { end: 650, start: 540 },
-        "-K2rlLd-VjcZ_rtBlVuM": { end: 620, start: 560 },
-        "-K2rlMb_GD98QiMk8zGF": { end: 700, start: 630 },
-        asd22BlVuM: { end: 720, start: 600 },
-        asd2BlVuM: { end: 720, start: 600 },
-        asd32BlVuM: { end: 720, start: 600 },
-        pozza: { end: 650, start: 540 },
-        asdfff: { end: 620, start: 560 }
-      }
+      events: {}
     };
   }
 
-  // // Function for fetching API data
-  // componentDidMount() {
-  //   fetch("https://appcues-interviews.firebaseio.com/calendar/events.json")
-  //     .then(response => {
-  //       return response.json();
-  //     })
-  //     .then(data => {
-  //       const events = data;
-  //
-  //       this.setState({ events });
-  //     });
-  // }
+  // Function for fetching API data
+  componentDidMount() {
+    fetch("https://appcues-interviews.firebaseio.com/calendar/events.json")
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        const events = data;
+
+        this.setState({ events });
+      });
+  }
 
   render() {
     return (
       <div>
         <h1>Appcues Calendar</h1>
-        <div className="dayView">
+        <div className="day-view">
           <YAxis />
           <EventList events={layOutDay(this.state.events)} />
         </div>
@@ -64,6 +41,8 @@ class App extends Component {
 }
 
 export default App;
+
+// ======================================== //
 
 function layOutDay(data) {
   // Helper fucntion to sort events by starting time, then by ending time

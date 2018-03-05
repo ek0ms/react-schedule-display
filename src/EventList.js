@@ -31,8 +31,8 @@ class EventList extends Component {
     }
 
     return (
-      <div className="eventList">
-        <div className="paddingWrapper">{array}</div>
+      <div className="event-list">
+        <div className="padding-wrapper">{array}</div>
       </div>
     );
   }

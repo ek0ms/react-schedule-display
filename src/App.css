@@ -1,48 +1,20 @@
-.yAxis {
-  height: 720px;
-  width: 100px;
-  position: relative;
-  border-right: 1px solid rgb(215, 215, 215);
-  padding-right: 10px;
+#root h1 {
+  text-align: center;
 }
-
-.eventList {
-  height: 720px;
-  width: 620px;
-  position: relative;
-  background-color: rgb(236, 236, 236);
-  padding: 0 10px;
-}
-
-.paddingWrapper {
-  position: relative;
-}
-
-.dayView {
-  background-color: rgb(255, 255, 255);
+#root .day-view {
+  background-color: white;
   width: 800px;
   margin: 40px auto;
   display: flex;
 }
-
-h4 {
-  margin: 0;
-  padding: 8px 0 0 8px;
-  font-size: 12px;
-  color: rgb(66, 99, 159);
+#root .day-view .y-axis {
+  height: 720px;
+  width: 100px;
+  position: relative;
+  border-right: 1px solid #d7d7d7;
+  padding-right: 10px;
 }
-
-p {
-  font-size: 10px;
-  margin: 0;
-  padding-left: 8px;
-}
-
-h1 {
-  text-align: center;
-}
-
-.time-text {
+#root .day-view .y-axis .time-text {
   height: 30px;
   position: relative;
   display: flex;
@@ -50,27 +22,44 @@ h1 {
   justify-content: flex-end;
   transform: translateY(-50%);
 }
-
-.grey-text {
-  margin-left: 5px;
-  color: rgb(169, 169, 169);
-  font-size: 0.75em;
-}
-
-.bold-text {
-  color: rgb(103, 103, 103);
+#root .day-view .y-axis .time-text .bold-text {
+  color: #676767;
   font-weight: bold;
 }
-
-.am-pm {
+#root .day-view .y-axis .time-text .grey-text {
+  margin-left: 5px;
+  color: darkgray;
+  font-size: 0.75em;
+}
+#root .day-view .y-axis .time-text .ap-pm {
   transform: translateY(10%);
 }
-
-.event {
-  background-color: rgb(255, 255, 255);
+#root .day-view .event-list {
+  height: 720px;
+  width: 620px;
+  position: relative;
+  background-color: #ececec;
+  padding: 0 10px;
+}
+#root .day-view .event-list .padding-wrapper {
+  position: relative;
+}
+#root .day-view .event-list .padding-wrapper .event {
+  background-color: white;
   position: absolute;
-  border: 1px solid rgb(208, 208, 208);
-  border-left: 4px solid rgb(66, 99, 158);
+  border: 1px solid #d0d0d0;
+  border-left: 4px solid #42639e;
   box-sizing: border-box;
   overflow: hidden;
+}
+#root .day-view .event-list .padding-wrapper .event .event-title {
+  margin: 0;
+  padding: 8px 0 0 8px;
+  font-size: 12px;
+  color: #42639f;
+}
+#root .day-view .event-list .padding-wrapper .event .event-location {
+  font-size: 10px;
+  margin: 0;
+  padding-left: 8px;
 }
