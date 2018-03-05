@@ -1,3 +1,4 @@
+// Component for structuring the times for the calendar
 import React from "react";
 
 const YAxis = () => (

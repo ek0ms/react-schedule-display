@@ -9,21 +9,51 @@ class App extends Component {
 
     this.state = {
       events: {
-        event1: { start: 60, end: 120 }, // an event from 10am to 11am
+        NineTo920: { start: 0, end: 20 }, // an event from 10:40am to 1pm
+        NineTo950: { start: 0, end: 50 }, // an event from 10:40am to 1pm
+        NineTo1130: { start: 0, end: 150 },
+        Nine30To1130: { start: 30, end: 150 },
+        TenTo11: { start: 60, end: 120 }, // an event from 10am to 11am
         event2: { start: 100, end: 240 }, // an event from 10:40am to 1pm
-        event3: { start: 700, end: 720 }, // an event from 8:40pm to 9pm
-        "-K2rlJ-nkJBtkLHL0QmO": { end: 150, start: 30 },
+        event56: { start: 140, end: 180 },
+        event256: { start: 140, end: 180 },
+        event4: { start: 100, end: 240 }, // an event from 10:40am to 1pm
+        sssss: { end: 360, start: 300 },
+        event6: { start: 700, end: 720 }, // an event from 8:40pm to 9pm
+        event67: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
+        event62: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
+        event63: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
+        event64: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
+        event65: { start: 600, end: 660 }, // an event from 8:40pm to 9pm
         "-K2rlKbFfXz3OEoxRBJU": { end: 650, start: 540 },
         "-K2rlLd-VjcZ_rtBlVuM": { end: 620, start: 560 },
-        "-K2rlMb_GD98QiMk8zGF": { end: 700, start: 630 }
+        "-K2rlMb_GD98QiMk8zGF": { end: 700, start: 630 },
+        asd22BlVuM: { end: 720, start: 600 },
+        asd2BlVuM: { end: 720, start: 600 },
+        asd32BlVuM: { end: 720, start: 600 },
+        pozza: { end: 650, start: 540 },
+        asdfff: { end: 620, start: 560 }
       }
     };
   }
 
+  // // Function for fetching API data
+  // componentDidMount() {
+  //   fetch("https://appcues-interviews.firebaseio.com/calendar/events.json")
+  //     .then(response => {
+  //       return response.json();
+  //     })
+  //     .then(data => {
+  //       const events = data;
+  //
+  //       this.setState({ events });
+  //     });
+  // }
+
   render() {
     return (
       <div>
-        <h1>Schedule</h1>
+        <h1>Appcues Calendar</h1>
         <div className="dayView">
           <YAxis />
           <EventList events={layOutDay(this.state.events)} />
@@ -36,16 +66,23 @@ class App extends Component {
 export default App;
 
 function layOutDay(data) {
-  // A sorted array of the event data
-  const eventEntriesArray = sortArrayByStartThenEnd(Object.entries(data));
-  const blockWidth = 620;
+  // Helper fucntion to sort events by starting time, then by ending time
+  const sortArrayByStartThenEnd = array =>
+    array.sort(([, event1], [, event2]) => {
+      if (event1.start < event2.start) return -1;
+      if (event1.start > event2.start) return 1;
+      if (event1.end < event2.end) return -1;
+      if (event1.end > event2.end) return 1;
+      return 0;
+    });
 
-  const eventedColumns = eventPlacer(eventEntriesArray);
-  return eventRestructurer(eventedColumns, blockWidth);
+  // Helper function to determine if two events collide
+  const collidesWith = (event1, event2) =>
+    event1.end > event2.start && event1.start < event2.end;
 
   // Function to place events; input is a sorted array of the events
   // Output is a multidemensional array where the elements are vertical groups(arrays) of the events
-  function eventPlacer(arrayParam) {
+  const eventPlacer = arrayParam => {
     const columns = [];
 
     arrayParam.forEach(([, currentEventValues], currentEventIndex) => {
@@ -60,11 +97,11 @@ function layOutDay(data) {
         for (
           let columnsIndex = 0;
           columnsIndex < columns.length;
-          columnsIndex++
+          columnsIndex += 1
         ) {
           const group = columns[columnsIndex];
 
-          for (let groupIndex = 0; groupIndex < group.length; groupIndex++) {
+          for (let groupIndex = 0; groupIndex < group.length; groupIndex += 1) {
             // Iterate through the events that are in the group
             const iteratingEventValues = group[groupIndex][1];
             if (
@@ -101,70 +138,115 @@ function layOutDay(data) {
       }
     });
     return columns;
-  }
+  };
+
+  // Function that iterates through the columns and attaches the
+  // number of colliding events to the event of that row
+  const numEventsInRowAdder = columns => {
+    // Function to calculate the number of events in the row
+    const eventsInRow = (event, columnsIndex, columns) => {
+      let numEventsInRow = columnsIndex + 1;
+
+      for (let i = columnsIndex + 1; i < columns.length; i += 1) {
+        // Iterate starting with the column after the current one
+        const nextColumn = columns[i];
+        for (let j = 0; j < nextColumn.length; j += 1) {
+          // Iterate through the events on that are in the goup
+          const nextEvent = nextColumn[j];
+          if (collidesWith(event[1], nextEvent[1])) {
+            // If the event collides with the event it is checking, increase the
+            // counter && break out of the loop
+            numEventsInRow += 1;
+            break;
+          }
+        }
+      }
+      return numEventsInRow;
+    };
+
+    // Iterate through the original columns array and return the same array
+    // but with number of events in the row attached as a property to each event
+    return columns.map((group, columnsIndex) => {
+      return group.map(currEvent => {
+        const numEventsInRow = {
+          numEventsInRow: eventsInRow(currEvent, columnsIndex, columns)
+        };
+        currEvent[1] = Object.assign(currEvent[1], numEventsInRow);
+        return currEvent;
+      });
+    });
+  };
+
+  // Helper function to provide a factor to calculate left and width properties
+  const widthLeftFactor = (event, columnsIndex, columns) => {
+    // Start by assuming highest factor is the number of colliding events in the row
+    let highestFactor = event[1].numEventsInRow;
+    let firstCollidingEventIndex = null;
+
+    // For the current event, if the next column index is equal to the highest
+    // factor, it assigns the firstCollidingEventIndex to its own column index + 1
+    // This is for assigning firstCollidingEventIndex correctly for the last event in the row
+    if (columnsIndex + 1 === highestFactor) {
+      firstCollidingEventIndex = columnsIndex + 1;
+    }
+
+    for (let i = columnsIndex + 1; i < columns.length; i += 1) {
+      // Iterate starting with the column after the current one
+      const nextColumn = columns[i];
+      for (let j = 0; j < nextColumn.length; j += 1) {
+        // Iterate through the events on that are in the goup
+        const nextEvent = nextColumn[j];
+        if (collidesWith(event[1], nextEvent[1])) {
+          // If firstCollidingEventIndex has not been assigned a value yet,
+          // assign it with the first event it collides with
+          if (firstCollidingEventIndex == null) {
+            firstCollidingEventIndex = i;
+          }
+
+          // As it iterates through the horizontally colliding events, it
+          // will assign highestFactor with the higher of the two event's numEventsInRow property
+          highestFactor = Math.max(
+            event[1].numEventsInRow,
+            nextEvent[1].numEventsInRow
+          );
+          break;
+        }
+      }
+    }
+
+    // It returns the product of (one fraction of the highest factor of events in the row)
+    // and (the amount of times it should be multiplied based off of the current
+    // event's index and the first event it collides with)
+    return [
+      1 / highestFactor * (firstCollidingEventIndex - columnsIndex),
+      highestFactor
+    ];
+  };
 
   // Iterate through the array of columns and reconstruct the objects, add properties,
   // and return them in an array
-  function eventRestructurer(columns, blockWidth) {
+  function eventRestructurer(columns) {
+    const containerWidth = 620;
     const resultArray = [];
-    const numberOfColumns = columns.length;
     columns.forEach((group, columnsIndex) => {
       group.forEach(event => {
-        const factor = leftWidthFactor(event, columnsIndex, columns);
+        const factorWL = widthLeftFactor(event, columnsIndex, columns);
         resultArray.push({
           id: `${event[0]}`,
           start: event[1].start,
           end: event[1].end,
           top: `${event[1].start}px`,
-          left: `${columnsIndex / numberOfColumns * 100 * factor}%`,
-          width: blockWidth / numberOfColumns * factor
+          width: containerWidth * factorWL[0],
+          left: `${columnsIndex / factorWL[1] * 100}%`
         });
       });
     });
     return resultArray;
   }
 
-  // Helper function to provide a factor to calculate left and width properties
-  function leftWidthFactor(event, columnsIndex, columns) {
-    const eventValues = event[1];
-    let factor = columns.length - columnsIndex;
-
-    for (let i = columnsIndex + 1; i < columns.length; i++) {
-      // Iterate starting with the column after the current one
-      const nextColumn = columns[i];
-      for (let j = 0; j < nextColumn.length; j++) {
-        // Iterate through the events on that are in the goup
-        const nextEventValues = nextColumn[j][1];
-        if (collidesWith(eventValues, nextEventValues)) {
-          // If the event collides with the event it is checking, decrease the
-          // factor && break out of the loop
-          factor--;
-          break;
-        }
-      }
-    }
-    if (factor === 1) {
-      // If the factor is 1, the number of colliding events in the horzizontal
-      // row is equal to the number of columns
-      return factor;
-    } else {
-      return columns.length / factor;
-    }
-  }
-
-  // Helper fucntion to sort events by starting time, then by ending time
-  function sortArrayByStartThenEnd(array) {
-    return array.sort(([, event1], [, event2]) => {
-      if (event1.start < event2.start) return -1;
-      if (event1.start > event2.start) return 1;
-      if (event1.end < event2.end) return -1;
-      if (event1.end > event2.end) return 1;
-      return 0;
-    });
-  }
-
-  // Helper function to determine if two events collide
-  function collidesWith(event1, event2) {
-    return event1.end >= event2.start && event1.start <= event2.end;
-  }
+  return eventRestructurer(
+    numEventsInRowAdder(
+      eventPlacer(sortArrayByStartThenEnd(Object.entries(data)))
+    )
+  );
 }

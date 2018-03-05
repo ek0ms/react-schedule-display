@@ -4,7 +4,8 @@ import React, { Component } from "react";
 import Event from "./Event";
 
 class EventList extends Component {
-  renderEvent(event) {
+  renderEvent(i) {
+    const event = this.props.events[i];
     const eventStyle = {
       height: `${event.end - event.start}px`,
       top: event.top,
@@ -15,7 +16,7 @@ class EventList extends Component {
     return (
       <Event
         key={event.id}
-        eventTitle="Sample Event"
+        eventTitle="Sample Title"
         eventLocation="Sample Location, SL"
         eventStyle={eventStyle}
       />
@@ -24,10 +25,9 @@ class EventList extends Component {
 
   render() {
     const array = [];
-    const [...events] = this.props.events;
 
-    for (let i = 0; i < events.length; i++) {
-      array.push(this.renderEvent(events[i]));
+    for (let i = 0; i < this.props.events.length; i += 1) {
+      array.push(this.renderEvent(i));
     }
 
     return (
