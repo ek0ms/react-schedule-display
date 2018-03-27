@@ -37,4 +37,4 @@ npm start
 3.  The function returns an array of event objects with appropriate properties and this data is passed to EventList
 4.  EventList creates Event's with the new data
 
-#####The inner workings of the functions and methods are furthered explained in the comments of the source code
+##### The inner workings of the functions and methods are furthered explained in the comments of the source code
