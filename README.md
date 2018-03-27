@@ -1,10 +1,8 @@
-# Appcues jeffrey-zhen-calendar
-
 ---
 
 ## Overview
 
-This challenge was completed in ReactJS. The majority of the functionality resides in App.js.
+This was completed in ReactJS. The majority of the functionality resides in App.js.
 
 **Event.js:** Returns Event class with properties gathered from EventList.js
 
@@ -15,6 +13,7 @@ This challenge was completed in ReactJS. The majority of the functionality resid
 **YAxis.js:** Provides structure for the time slots on the left of the calendar
 
 ## Install
+
 Move to root project folder and with npm:
 
 ```
@@ -22,6 +21,7 @@ npm install
 ```
 
 ## Usage
+
 **To run:** Move to root folder and with npm:
 
 ```
@@ -29,6 +29,7 @@ npm start
 ```
 
 ## Details
+
 **In App.js**:
 
 1.  Data is fetched in ComponentDidMount() and the state is updated
